@@ -2,12 +2,13 @@ const express = require("express")
 const router = express.Router();
 const searchHandler = require("../handlers/search")
 const { getValidation } = require("../validations")
+const axios = require("axios")
 
-router.get("/:name/:size", getValidation("search"), (req, res, next) => {
-    console.log(typeof searchHandler.searchMovies)
-    // next(new Error("this is error in getMovies"))
-    const result = searchHandler.searchMovies(req.params.name)
-    return res.json(result)
+router.get("/:name/:size", getValidation("search"), async (req, res, next) => {
+    const { name } = req.params;
+    const { data } = await axios.get(`${process.env.MOVIES_API}?s=${name}&plot=full&apikey=${process.env.MOVIES_API_SECRET}`)
+    // const result = searchHandler.searchMovies(req.params.name, data.Search)
+    return res.json(data)
 })
 
 router.post("/", isAdmin(), getValidation("movie"), (req, res, next) => {
