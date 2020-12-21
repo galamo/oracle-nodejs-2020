@@ -1,14 +1,27 @@
 console.log("Api Script start")
 const express = require("express")
+const bodyParser = require("body-parser")
 
+const { router: moviesRouter } = require("./routes/movies")
+const { router: ticketsRouter } = require("./routes/movies")
+
+require("dotenv").config()
+
+const { PORT, SECRET } = process.env
+const variables = ["PORT", "SECRET"]
+
+function validateEnvs() {
+    variables.map((envParam) => {
+        if (!process.env[envParam]) console.log('\x1b[36m%s\x1b[0m', `missing env param: ${envParam}`)
+    })
+}
+validateEnvs()
 const app = express();
+const secretToken = SECRET
 
-let numberOfRequest = 0;
-const secretToken = "1234"
-
-
+app.use(bodyParser.json())
 app.use((req, res, next) => {
-    console.log(req.path, numberOfRequest)
+    console.log(req.method, req.path)
     console.log(`${req.ip}`)
     if (secretToken === req.query.token) {
         next()
@@ -17,22 +30,21 @@ app.use((req, res, next) => {
     }
 })
 
-app.get("/movies", (req, res, next) => {
-    numberOfRequest++;
-    res.send(`Movies Api result ${numberOfRequest}`)
+app.use("/movies", moviesRouter)
+app.use("/tickets", ticketsRouter)
+
+
+app.use((err, req, res, next) => {
+    console.log("middleware error")
+    console.log(err.message)
+    res.send(err.message)
 })
 
-app.get("/tickets", (req, res, next) => {
-    numberOfRequest++;
-    res.send(`Tickets Api result ${numberOfRequest}`)
-})
-
-
-
-
-app.listen(4500, () => {
+app.listen(PORT, () => {
     console.log("Server is running")
 })
+
+
 
 
 

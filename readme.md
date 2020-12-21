@@ -12,3 +12,6 @@
 # Installations
 - `npm install nodemon -g`
 - `npm i express`
+- `npm install body-parser`
+- `npm install dotenv`
+- `npm install @hapi/joi`
