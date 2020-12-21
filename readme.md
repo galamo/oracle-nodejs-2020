@@ -9,3 +9,6 @@
 - `node index.js`
 
 
+# Installations
+- `npm install nodemon -g`
+- `npm i express`
